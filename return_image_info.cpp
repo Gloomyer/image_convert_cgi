@@ -4,6 +4,7 @@
 #include <fcgi_stdio.h>
 #include <sys/stat.h>
 #include <openssl/md5.h>
+#include <openssl/sha.h>
 
 extern "C" {
 #include<libavcodec/avcodec.h>
@@ -20,30 +21,35 @@ typedef struct _ImageInfo {
     int light;
     const char *mine_type;
     std::string *md5 = nullptr;
+    std::string *sha1 = nullptr;
 } ImageInfo;
 
 void get_file_md5(ImageInfo *image_info, const char *in_file_path) {
     std::ifstream file(in_file_path, std::ifstream::binary);
     if (file) {
-        MD5_CTX md5Context;
-        MD5_Init(&md5Context);
-        char buf[1024 * 4];
-        while (file.good()) {
-            file.read(buf, sizeof(buf));
-            MD5_Update(&md5Context, buf, file.gcount());
-        }
-        unsigned char result[MD5_DIGEST_LENGTH];
-        MD5_Final(result, &md5Context);
+        MD5_CTX md5_ctx;
+        MD5_Init(&md5_ctx);
 
-        char hex[35];
+        char buff[1024 * 4];
+        while (file.good()) {
+            file.read(buff, sizeof(buff));
+            MD5_Update(&md5_ctx, buff, file.gcount());
+        }
+
+        unsigned char md5_result[MD5_DIGEST_LENGTH];
+        MD5_Final(md5_result, &md5_ctx);
+
+        char hex[35] = {0};
         memset(hex, 0, sizeof(hex));
         for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
-            sprintf(hex + i * 2, "%02x", result[i]);
+            sprintf(hex + i * 2, "%02x", md5_result[i]);
         }
+
         hex[32] = '\0';
         image_info->md5 = new std::string(hex);
         file.close();
     }
+
 }
 
 void getImageInfo(ImageInfo *image_info, const char *uri, bool isDetail) {
@@ -154,6 +160,10 @@ void return_base_info(const char *uri) {
 
 void return_detail_info(const char *uri) {
     ImageInfo info;
+    auto *md5 = new std::string();
+    auto *sha1 = new std::string();
+    info.md5 = md5;
+    info.sha1 = sha1;
     getImageInfo(&info, uri, true);
     printf("Content-type: application/json;\r\n\r\n");
     printf(R"({"ret":{"errCode":0,"errName":"success","msg":"success"},"data":
@@ -163,10 +173,15 @@ void return_detail_info(const char *uri) {
 "height": %d,
 "light": %d,
 "mineType": "%s",
-"md5": "%s"
+"md5": "%s",
+"sha1": "%s"
 }})",
-           info.file_size, info.width, info.height, info.light, info.mine_type, info.md5->c_str());
-    if (info.md5 != nullptr) {
-        delete info.md5;
-    }
+           info.file_size, info.width, info.height, info.light, info.mine_type,
+           info.md5->c_str(), info.sha1->c_str());
+
+    //释放资源
+    delete md5;
+    delete sha1;
+    if (info.md5 != md5)delete info.md5;
+    if (info.sha1 != sha1)delete info.sha1;
 }

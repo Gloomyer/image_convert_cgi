@@ -54,6 +54,7 @@ CMakeFiles/convert_cgi.dir/return_image_info.cpp.o: /usr/local/opt/openssl@1.1/i
 CMakeFiles/convert_cgi.dir/return_image_info.cpp.o: /usr/local/opt/openssl@1.1/include/openssl/md5.h
 CMakeFiles/convert_cgi.dir/return_image_info.cpp.o: /usr/local/opt/openssl@1.1/include/openssl/opensslconf.h
 CMakeFiles/convert_cgi.dir/return_image_info.cpp.o: /usr/local/opt/openssl@1.1/include/openssl/opensslv.h
+CMakeFiles/convert_cgi.dir/return_image_info.cpp.o: /usr/local/opt/openssl@1.1/include/openssl/sha.h
 
 CMakeFiles/convert_cgi.dir/return_origin_file.cpp.o: ../methods.h
 CMakeFiles/convert_cgi.dir/return_origin_file.cpp.o: ../return_origin_file.cpp
