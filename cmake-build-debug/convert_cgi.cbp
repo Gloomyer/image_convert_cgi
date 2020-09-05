@@ -46,6 +46,7 @@
 				<Compiler>
 					<Add directory="/usr/local/Cellar/fcgi/2.4.2/include"/>
 					<Add directory="/usr/local/Cellar/ffmpeg/4.3.1/include"/>
+					<Add directory="/usr/local/opt/openssl@1.1/include"/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.3/include"/>
@@ -69,6 +70,7 @@
 				<Compiler>
 					<Add directory="/usr/local/Cellar/fcgi/2.4.2/include"/>
 					<Add directory="/usr/local/Cellar/ffmpeg/4.3.1/include"/>
+					<Add directory="/usr/local/opt/openssl@1.1/include"/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.3/include"/>
@@ -85,21 +87,6 @@
 			</Target>
 		</Build>
 		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/main.cpp">
-			<Option target="convert_cgi"/>
-		</Unit>
-		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/md5.cpp">
-			<Option target="convert_cgi"/>
-		</Unit>
-		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/md5.h">
-			<Option target="convert_cgi"/>
-		</Unit>
-		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/md5file.cpp">
-			<Option target="convert_cgi"/>
-		</Unit>
-		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/md5file.h">
-			<Option target="convert_cgi"/>
-		</Unit>
-		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/md5global.h">
 			<Option target="convert_cgi"/>
 		</Unit>
 		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/methods.h">

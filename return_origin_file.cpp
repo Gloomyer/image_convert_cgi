@@ -3,16 +3,13 @@
 #include <fcgi_stdio.h>
 #include <sys/stat.h>
 
-const char *get_suffix(char *uri) {
+const char *get_suffix(const char *uri) {
     std::string url(uri);
     int idx = url.find_last_of(".");
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-stack-address"
     return url.substr(idx + 1).c_str();
-#pragma clang diagnostic pop
 }
 
-void return_origin_file(char *uri) {
+void return_origin_file(const char *uri) {
     std::string path(FILE_PREFIX);
     path.append(uri);
     FILE *p_in_file = fopen(path.c_str(), "rb+");

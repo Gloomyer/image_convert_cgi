@@ -10,7 +10,7 @@ int main() {
         try {
             char *uri = getenv("DOCUMENT_URI");
             if (str_has(uri, "fingo_test.test") > 0) {
-                return_test_html();
+                return_test_info();
             } else {
                 char *query_str = getenv("QUERY_STRING");
                 if (strlen(query_str) == 0) {

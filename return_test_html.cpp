@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fcgi_stdio.h>
 
-void return_test_html() {
+void return_test_info() {
     printf("Content-type: application/json;\r\n\r\n");
     printf(R"(
 {"software":"%s",

@@ -1,7 +1,9 @@
 #include "methods.h"
 #include <iostream>
+#include <fstream>
 #include <fcgi_stdio.h>
 #include <sys/stat.h>
+#include <openssl/md5.h>
 
 extern "C" {
 #include<libavcodec/avcodec.h>
@@ -21,9 +23,30 @@ typedef struct _ImageInfo {
 } ImageInfo;
 
 void get_file_md5(ImageInfo *image_info, const char *in_file_path) {
+    std::ifstream file(in_file_path, std::ifstream::binary);
+    if (file) {
+        MD5_CTX md5Context;
+        MD5_Init(&md5Context);
+        char buf[1024 * 4];
+        while (file.good()) {
+            file.read(buf, sizeof(buf));
+            MD5_Update(&md5Context, buf, file.gcount());
+        }
+        unsigned char result[MD5_DIGEST_LENGTH];
+        MD5_Final(result, &md5Context);
+
+        char hex[35];
+        memset(hex, 0, sizeof(hex));
+        for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
+            sprintf(hex + i * 2, "%02x", result[i]);
+        }
+        hex[32] = '\0';
+        image_info->md5 =  std::string(hex).c_str();
+        file.close();
+    }
 }
 
-void getImageInfo(ImageInfo *image_info, char *uri, bool isDetail) {
+void getImageInfo(ImageInfo *image_info,const char *uri, bool isDetail) {
     struct stat info{};
     std::string file_path(FILE_PREFIX);
     file_path.append(uri);
@@ -116,7 +139,7 @@ void getImageInfo(ImageInfo *image_info, char *uri, bool isDetail) {
     }
 }
 
-void return_base_info(char *uri) {
+void return_base_info(const char *uri) {
     ImageInfo info;
     getImageInfo(&info, uri, false);
     printf("Content-type: application/json;\r\n\r\n");
@@ -130,7 +153,7 @@ void return_base_info(char *uri) {
            info.file_size, info.width, info.height, info.mine_type);
 }
 
-void return_detail_info(char *uri) {
+void return_detail_info(const char *uri) {
     ImageInfo info;
     getImageInfo(&info, uri, true);
     printf("Content-type: application/json;\r\n\r\n");
