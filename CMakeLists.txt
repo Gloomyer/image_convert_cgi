@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(/usr/local/Cellar/fcgi/2.4.2/include)
 include_directories(/usr/local/Cellar/ffmpeg/4.3.1/include)
 include_directories(/usr/local/opt/openssl@1.1/include)
+include_directories(/usr/local/Cellar/imagemagick/7.0.10-28/include/ImageMagick-7)
 
 add_library(libfcgi SHARED IMPORTED)
 set_target_properties(libfcgi PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/fcgi/2.4.2/lib/libfcgi.0.dylib)
@@ -25,11 +26,21 @@ add_library(openssl SHARED IMPORTED)
 set_target_properties(openssl-crypto PROPERTIES IMPORTED_LOCATION /usr/local/opt/openssl@1.1/lib/libcrypto.dylib)
 set_target_properties(openssl PROPERTIES IMPORTED_LOCATION /usr/local/opt/openssl@1.1/lib/libssl.dylib)
 
-add_executable(convert_cgi utils.hpp methods.h return_test_html.cpp return_error_info.cpp
-        return_origin_file.cpp return_image_info.cpp
+add_library(imagemagick-core SHARED IMPORTED)
+set_target_properties(imagemagick-core PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagickCore-7.Q16HDRI.dylib)
+add_library(imagemagick-wand SHARED IMPORTED)
+set_target_properties(imagemagick-wand PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagickWand-7.Q16HDRI.dylib)
+add_library(imagemagick-pp SHARED IMPORTED)
+set_target_properties(imagemagick-pp PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagick++-7.Q16HDRI.dylib)
+
+
+add_executable(convert_cgi utils.hpp ffmpeg_utils.h methods.h
+        return_test_html.cpp return_error_info.cpp
+        return_origin_file.cpp return_image_info.cpp return_image_scale.cpp
         main.cpp)
 
 target_link_libraries(${PROJECT_NAME}
         libfcgi
         avcodec avformat avutil swresample swscale
-        openssl-crypto openssl)
+        openssl-crypto openssl
+        imagemagick-core imagemagick-wand imagemagick-pp)

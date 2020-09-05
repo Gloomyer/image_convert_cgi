@@ -224,6 +224,33 @@ return_image_info.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/return_image_info.cpp.s
 .PHONY : return_image_info.cpp.s
 
+return_image_scale.o: return_image_scale.cpp.o
+
+.PHONY : return_image_scale.o
+
+# target to build an object file
+return_image_scale.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o
+.PHONY : return_image_scale.cpp.o
+
+return_image_scale.i: return_image_scale.cpp.i
+
+.PHONY : return_image_scale.i
+
+# target to preprocess a source file
+return_image_scale.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/return_image_scale.cpp.i
+.PHONY : return_image_scale.cpp.i
+
+return_image_scale.s: return_image_scale.cpp.s
+
+.PHONY : return_image_scale.s
+
+# target to generate assembly for a file
+return_image_scale.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/return_image_scale.cpp.s
+.PHONY : return_image_scale.cpp.s
+
 return_origin_file.o: return_origin_file.cpp.o
 
 .PHONY : return_origin_file.o
@@ -296,6 +323,9 @@ help:
 	@echo "... return_image_info.o"
 	@echo "... return_image_info.i"
 	@echo "... return_image_info.s"
+	@echo "... return_image_scale.o"
+	@echo "... return_image_scale.i"
+	@echo "... return_image_scale.s"
 	@echo "... return_origin_file.o"
 	@echo "... return_origin_file.i"
 	@echo "... return_origin_file.s"

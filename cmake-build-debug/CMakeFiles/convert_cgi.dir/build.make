@@ -129,9 +129,22 @@ CMakeFiles/convert_cgi.dir/return_image_info.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/convert_cgi.dir/return_image_info.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gloomypan/Projects/cpp/convert_cgi/return_image_info.cpp -o CMakeFiles/convert_cgi.dir/return_image_info.cpp.s
 
+CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o: CMakeFiles/convert_cgi.dir/flags.make
+CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o: ../return_image_scale.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o -c /Users/gloomypan/Projects/cpp/convert_cgi/return_image_scale.cpp
+
+CMakeFiles/convert_cgi.dir/return_image_scale.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/convert_cgi.dir/return_image_scale.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gloomypan/Projects/cpp/convert_cgi/return_image_scale.cpp > CMakeFiles/convert_cgi.dir/return_image_scale.cpp.i
+
+CMakeFiles/convert_cgi.dir/return_image_scale.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/convert_cgi.dir/return_image_scale.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gloomypan/Projects/cpp/convert_cgi/return_image_scale.cpp -o CMakeFiles/convert_cgi.dir/return_image_scale.cpp.s
+
 CMakeFiles/convert_cgi.dir/main.cpp.o: CMakeFiles/convert_cgi.dir/flags.make
 CMakeFiles/convert_cgi.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/convert_cgi.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/convert_cgi.dir/main.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/convert_cgi.dir/main.cpp.o -c /Users/gloomypan/Projects/cpp/convert_cgi/main.cpp
 
 CMakeFiles/convert_cgi.dir/main.cpp.i: cmake_force
@@ -148,6 +161,7 @@ convert_cgi_OBJECTS = \
 "CMakeFiles/convert_cgi.dir/return_error_info.cpp.o" \
 "CMakeFiles/convert_cgi.dir/return_origin_file.cpp.o" \
 "CMakeFiles/convert_cgi.dir/return_image_info.cpp.o" \
+"CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o" \
 "CMakeFiles/convert_cgi.dir/main.cpp.o"
 
 # External object files for target convert_cgi
@@ -157,6 +171,7 @@ convert_cgi: CMakeFiles/convert_cgi.dir/return_test_html.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/return_error_info.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/return_origin_file.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/return_image_info.cpp.o
+convert_cgi: CMakeFiles/convert_cgi.dir/return_image_scale.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/main.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/build.make
 convert_cgi: /usr/local/Cellar/fcgi/2.4.2/lib/libfcgi.0.dylib
@@ -167,8 +182,11 @@ convert_cgi: /usr/local/Cellar/ffmpeg/4.3.1/lib/libswresample.3.dylib
 convert_cgi: /usr/local/Cellar/ffmpeg/4.3.1/lib/libswscale.5.dylib
 convert_cgi: /usr/local/opt/openssl@1.1/lib/libcrypto.dylib
 convert_cgi: /usr/local/opt/openssl@1.1/lib/libssl.dylib
+convert_cgi: /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagickCore-7.Q16HDRI.dylib
+convert_cgi: /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagickWand-7.Q16HDRI.dylib
+convert_cgi: /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagick++-7.Q16HDRI.dylib
 convert_cgi: CMakeFiles/convert_cgi.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable convert_cgi"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable convert_cgi"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/convert_cgi.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
