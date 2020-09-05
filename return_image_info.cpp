@@ -19,7 +19,7 @@ typedef struct _ImageInfo {
     int height;
     int light;
     const char *mine_type;
-    const char *md5;
+    std::string *md5 = nullptr;
 } ImageInfo;
 
 void get_file_md5(ImageInfo *image_info, const char *in_file_path) {
@@ -41,12 +41,12 @@ void get_file_md5(ImageInfo *image_info, const char *in_file_path) {
             sprintf(hex + i * 2, "%02x", result[i]);
         }
         hex[32] = '\0';
-        image_info->md5 =  std::string(hex).c_str();
+        image_info->md5 = new std::string(hex);
         file.close();
     }
 }
 
-void getImageInfo(ImageInfo *image_info,const char *uri, bool isDetail) {
+void getImageInfo(ImageInfo *image_info, const char *uri, bool isDetail) {
     struct stat info{};
     std::string file_path(FILE_PREFIX);
     file_path.append(uri);
@@ -55,7 +55,6 @@ void getImageInfo(ImageInfo *image_info,const char *uri, bool isDetail) {
     image_info->file_size = info.st_size;
     image_info->light = 0;
     image_info->mine_type = "";
-    image_info->md5 = "";
 
     AVFormatContext *p_format_ctx = nullptr;
     int ret = avformat_open_input(&p_format_ctx, file_path.c_str(), nullptr, nullptr);
@@ -166,5 +165,8 @@ void return_detail_info(const char *uri) {
 "mineType": "%s",
 "md5": "%s"
 }})",
-           info.file_size, info.width, info.height, info.light, info.mine_type, info.md5);
+           info.file_size, info.width, info.height, info.light, info.mine_type, info.md5->c_str());
+    if (info.md5 != nullptr) {
+        delete info.md5;
+    }
 }
