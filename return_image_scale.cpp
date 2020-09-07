@@ -24,6 +24,7 @@ void save2File(AVFrame *p_frame, HandleResult *result) {
     if (p_format_ctx->oformat == nullptr) {
         std::string errorMsg("没找到类型:");
         errorMsg.append(result->src_format_ctx->iformat->mime_type);
+        return_error_info(errorMsg.c_str());
     } else {
         char out_path[200];
         time_t now;
@@ -51,6 +52,7 @@ void save2File(AVFrame *p_frame, HandleResult *result) {
 
             AVCodec *p_codec = avcodec_find_encoder(p_codec_ctx->codec_id);
 
+            ret = -1;
             if (!avcodec_is_open(p_codec_ctx)) {
                 ret = avcodec_open2(p_codec_ctx, p_codec, nullptr);
             }
