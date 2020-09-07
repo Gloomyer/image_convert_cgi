@@ -12,30 +12,6 @@ libavformat/avformat.h
 
 /Users/gloomypan/Projects/cpp/convert_cgi/methods.h
 
-/Users/gloomypan/Projects/cpp/convert_cgi/return_image_info.cpp
-methods.h
-/Users/gloomypan/Projects/cpp/convert_cgi/methods.h
-iostream
--
-fstream
--
-fcgi_stdio.h
--
-sys/stat.h
--
-openssl/md5.h
--
-libavcodec/avcodec.h
--
-libavformat/avformat.h
--
-libavutil/log.h
--
-libswscale/swscale.h
--
-libavutil/imgutils.h
--
-
 /Users/gloomypan/Projects/cpp/convert_cgi/return_image_scale.cpp
 methods.h
 /Users/gloomypan/Projects/cpp/convert_cgi/methods.h
@@ -431,26 +407,4 @@ libavutil/pixfmt.h
 /usr/local/Cellar/ffmpeg/4.3.1/include/libswscale/libavutil/pixfmt.h
 version.h
 /usr/local/Cellar/ffmpeg/4.3.1/include/libswscale/version.h
-
-/usr/local/opt/openssl@1.1/include/openssl/e_os2.h
-openssl/opensslconf.h
--
-inttypes.h
--
-stdint.h
--
-
-/usr/local/opt/openssl@1.1/include/openssl/md5.h
-openssl/opensslconf.h
--
-openssl/e_os2.h
--
-stddef.h
--
-
-/usr/local/opt/openssl@1.1/include/openssl/opensslconf.h
-openssl/opensslv.h
--
-
-/usr/local/opt/openssl@1.1/include/openssl/opensslv.h
 

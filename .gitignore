@@ -1,2 +1,5 @@
 .idea/
+cmake-build-debug
 cmake-build-debug/
+venv/
+.cgi_pid.pid
