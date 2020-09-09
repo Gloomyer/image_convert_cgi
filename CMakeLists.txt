@@ -8,7 +8,10 @@ include_directories(/usr/local/opt/openssl@1.1/include)
 include_directories(/usr/local/Cellar/imagemagick/7.0.10-28/include/ImageMagick-7)
 
 add_library(libfcgi SHARED IMPORTED)
-set_target_properties(libfcgi PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/fcgi/2.4.2/lib/libfcgi.0.dylib)
+set_target_properties(libfcgi PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/fcgi/2.4.2/lib/libfcgi.dylib)
+add_library(libfcgi_pp SHARED IMPORTED)
+set_target_properties(libfcgi_pp PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/fcgi/2.4.2/lib/libfcgi++.dylib)
+
 
 add_library(avcodec SHARED IMPORTED)
 add_library(avformat SHARED IMPORTED)
@@ -33,14 +36,14 @@ set_target_properties(imagemagick-wand PROPERTIES IMPORTED_LOCATION /usr/local/C
 add_library(imagemagick-pp SHARED IMPORTED)
 set_target_properties(imagemagick-pp PROPERTIES IMPORTED_LOCATION /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagick++-7.Q16HDRI.dylib)
 
+FILE(GLOB SRC_MAIN "./src/*.cpp" "./src/*.h")
+FILE(GLOB SRC_SOURCE "./src/*/*.cpp" "./src/*/*.h")
 
-add_executable(convert_cgi utils.hpp ffmpeg_utils.h methods.h
-        return_test_html.cpp return_error_info.cpp
-        return_origin_file.cpp return_image_info.cpp return_image_scale.cpp
-        main.cpp)
+add_executable(convert_cgi ${SRC_SOURCE} ${SRC_MAIN})
+
 
 target_link_libraries(${PROJECT_NAME}
-        libfcgi
+        libfcgi libfcgi_pp
         avcodec avformat avutil swresample swscale
         openssl-crypto openssl
         imagemagick-core imagemagick-wand imagemagick-pp)

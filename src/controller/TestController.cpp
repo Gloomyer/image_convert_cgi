@@ -1,9 +1,9 @@
-#include "methods.h"
-#include <iostream>
+#include "../Apis.h"
 #include <fcgi_stdio.h>
+#include <cstdlib>
 
-void return_test_info() {
-    printf("Content-type: application/json;\r\n\r\n");
+void controller_test_handler() {
+    printf(CONTENT_TYPE_JSON);
     printf(R"(
 {"software":"%s",
 "path":"%s",
