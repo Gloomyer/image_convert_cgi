@@ -8,10 +8,20 @@
 /**
  * 图片缩放
  * @param image image
- * @param w w
- * @param h h
+ * @param dst_w  目标w
+ * @param dst_h  目标y
+ * @param src_w  原宽
+ * @param src_h  原高
  */
-void scale_image(Magick::Image &image, int dst_w, int dst_h, int src_w, int src_h) {
+void shrink_image(Magick::Image &image, int dst_w, int dst_h) {
+    int src_w = image.columns();
+    int src_h = image.rows();
+
+    if (dst_w > src_w || dst_h > src_h) {
+        //只缩，不放大
+        return;
+    }
+
     //优先使用 w 缩放图片,
     if (dst_w > 0) {
         int scale_w = dst_w;
@@ -23,6 +33,32 @@ void scale_image(Magick::Image &image, int dst_w, int dst_h, int src_w, int src_
         double scale = dst_h * 1.0 / src_h;
         int scale_w = (int) (src_w * scale);
         image.scale(Magick::Geometry(scale_w, scale_h));
+    }
+}
+
+/**
+ * 裁切图片
+ * @param image image
+ * @param dst_w  目标w
+ * @param dst_h  目标y
+ * @param src_w  原宽
+ * @param src_h  原高
+ */
+void crop_image(Magick::Image &image, int dst_w, int dst_h) {
+    int src_w = image.columns();
+    int src_h = image.rows();
+    if (dst_w > src_w || dst_h > src_h) {
+        //如果要裁的的尺寸比原图大,重新计算要裁切的尺寸
+        if (dst_w > src_w) {
+            dst_w = src_w;
+            double scale = src_w * 1.0 / dst_w;
+            dst_h = (int) (scale * dst_h);
+            image.crop(Magick::Geometry(dst_w, dst_h,
+                                        src_w / 2 - dst_w / 2,
+                                        src_w / 2 - dst_w / 2));
+        } else {
+
+        }
     }
 }
 
@@ -55,7 +91,7 @@ void controller_image_handler(std::string &uri, std::string &query_str) {
     }
 
     Magick::Image image;
-    int origin_w = -1, origin_h = -1;
+    int origin_w, origin_h;
     try {
         image.read(path);
         origin_w = image.columns();
@@ -67,8 +103,10 @@ void controller_image_handler(std::string &uri, std::string &query_str) {
 
 
     for (auto &method :methods) {
-        if (method == "scale") {
-            scale_image(image, target_w, target_h, origin_w, origin_h);
+        if (method == "shrink") {
+            shrink_image(image, target_w, target_h);
+        } else if (method == "crop") {
+            crop_image(image, target_w, target_h);
         }
     }
 
