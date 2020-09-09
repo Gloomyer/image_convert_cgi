@@ -5,7 +5,7 @@ try:
     file = open(".cgi_pid.pid", "r")
     line = file.readline()
     print("line", line)
-    os.system("kill " + line)
+    os.system("kill -s 9 " + line)
 except IOError:
     print("IOError")
 

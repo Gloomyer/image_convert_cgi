@@ -80,7 +80,7 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
 
     std::vector<std::string> entities = str_spilt(query_str, "&");
     std::vector<std::string> methods;
-    int target_w = -1, target_h = -1;
+    int target_w = -1, target_h = -1, q = 100;
     for (auto &entity : entities) {
         std::vector<std::string> map = str_spilt(entity, "=");
         //如果不是2 就是无效参数
@@ -91,6 +91,8 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
                 target_w = std::stoi(map[1]);
             } else if ("h" == map[0]) {
                 target_h = std::stoi(map[1]);
+            } else if ("q" == map[0]) {
+                q = std::stoi(map[1]);
             }
         }
     }
@@ -118,8 +120,11 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
         } else if (method == "crop") {
             ret = crop_image(image, target_w, target_h);
         }
-
         if (ret != 0)break;
+    }
+
+    if (q < 100) {
+        image.quality(q);
     }
 
     if (ret != 0) {
@@ -135,6 +140,6 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
                  origin_w, origin_h,
                  image.columns(), image.rows());
     FCGX_FPrintF(request.out, "Time-Consuming: %lld;\r\n", duration);
-    FCGX_FPrintF(request.out, CONTENT_TYPE_IMAGE, get_suffix(path));
+    FCGX_FPrintF(request.out, CONTENT_TYPE_IMAGE, image.magick().c_str());
     FCGX_PutStr((char *) blob.data(), blob.length(), request.out);
 }
