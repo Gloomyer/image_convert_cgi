@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/convert_cgi.dir/src/common/utils.cpp.o"
   "CMakeFiles/convert_cgi.dir/src/controller/ErrorController.cpp.o"
   "CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.o"
+  "CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o"
   "CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o"
   "CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o"
   "convert_cgi"

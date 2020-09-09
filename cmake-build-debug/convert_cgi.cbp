@@ -106,6 +106,9 @@
 		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageController.cpp">
 			<Option target="convert_cgi"/>
 		</Unit>
+		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageInfoController.cpp">
+			<Option target="convert_cgi"/>
+		</Unit>
 		<Unit filename="/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/RetFileController.cpp">
 			<Option target="convert_cgi"/>
 		</Unit>

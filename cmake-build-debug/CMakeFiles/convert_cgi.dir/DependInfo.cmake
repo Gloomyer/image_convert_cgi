@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/gloomypan/Projects/cpp/convert_cgi/src/common/utils.cpp" "/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir/src/common/utils.cpp.o"
   "/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ErrorController.cpp" "/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir/src/controller/ErrorController.cpp.o"
   "/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageController.cpp" "/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.o"
+  "/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageInfoController.cpp" "/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o"
   "/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/RetFileController.cpp" "/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o"
   "/Users/gloomypan/Projects/cpp/convert_cgi/src/controller/TestController.cpp" "/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o"
   )

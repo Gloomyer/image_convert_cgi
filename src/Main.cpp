@@ -31,6 +31,10 @@ static void *handler_thread(void *args) {
                 controller_test_handler(request);
             } else if (query_str.length() == 0) {
                 controller_ret_file_handler(request, document_uri);
+            } else if (query_str.find("type=basicInfo") < document_uri.length()) {
+                controller_ret_image_basic_info(request, document_uri);
+            } else if (query_str.find("type=detailInfo") < document_uri.length()) {
+                controller_ret_image_detail_info(request, document_uri);
             } else if (query_str.find("type=") < document_uri.length()) {
                 controller_image_handler(request, document_uri, query_str);
             } else {

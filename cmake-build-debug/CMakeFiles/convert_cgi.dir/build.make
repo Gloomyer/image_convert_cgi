@@ -116,9 +116,22 @@ CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageController.cpp -o CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.s
 
+CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o: CMakeFiles/convert_cgi.dir/flags.make
+CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o: ../src/controller/ImageInfoController.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o -c /Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageInfoController.cpp
+
+CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageInfoController.cpp > CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.i
+
+CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/gloomypan/Projects/cpp/convert_cgi/src/controller/ImageInfoController.cpp -o CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.s
+
 CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o: CMakeFiles/convert_cgi.dir/flags.make
 CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o: ../src/controller/RetFileController.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o -c /Users/gloomypan/Projects/cpp/convert_cgi/src/controller/RetFileController.cpp
 
 CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.i: cmake_force
@@ -131,7 +144,7 @@ CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.s: cmake_force
 
 CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o: CMakeFiles/convert_cgi.dir/flags.make
 CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o: ../src/controller/TestController.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o -c /Users/gloomypan/Projects/cpp/convert_cgi/src/controller/TestController.cpp
 
 CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.i: cmake_force
@@ -144,7 +157,7 @@ CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.s: cmake_force
 
 CMakeFiles/convert_cgi.dir/src/Main.cpp.o: CMakeFiles/convert_cgi.dir/flags.make
 CMakeFiles/convert_cgi.dir/src/Main.cpp.o: ../src/Main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/convert_cgi.dir/src/Main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/convert_cgi.dir/src/Main.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/convert_cgi.dir/src/Main.cpp.o -c /Users/gloomypan/Projects/cpp/convert_cgi/src/Main.cpp
 
 CMakeFiles/convert_cgi.dir/src/Main.cpp.i: cmake_force
@@ -160,6 +173,7 @@ convert_cgi_OBJECTS = \
 "CMakeFiles/convert_cgi.dir/src/common/utils.cpp.o" \
 "CMakeFiles/convert_cgi.dir/src/controller/ErrorController.cpp.o" \
 "CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.o" \
+"CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o" \
 "CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o" \
 "CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o" \
 "CMakeFiles/convert_cgi.dir/src/Main.cpp.o"
@@ -170,6 +184,7 @@ convert_cgi_EXTERNAL_OBJECTS =
 convert_cgi: CMakeFiles/convert_cgi.dir/src/common/utils.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/src/controller/ErrorController.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.o
+convert_cgi: CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/src/controller/RetFileController.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/src/controller/TestController.cpp.o
 convert_cgi: CMakeFiles/convert_cgi.dir/src/Main.cpp.o
@@ -187,7 +202,7 @@ convert_cgi: /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagickCore-7.Q16HDRI
 convert_cgi: /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagickWand-7.Q16HDRI.dylib
 convert_cgi: /usr/local/Cellar/imagemagick/7.0.10-28/lib/libMagick++-7.Q16HDRI.dylib
 convert_cgi: CMakeFiles/convert_cgi.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable convert_cgi"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable convert_cgi"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/convert_cgi.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

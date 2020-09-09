@@ -251,6 +251,33 @@ src/controller/ImageController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/src/controller/ImageController.cpp.s
 .PHONY : src/controller/ImageController.cpp.s
 
+src/controller/ImageInfoController.o: src/controller/ImageInfoController.cpp.o
+
+.PHONY : src/controller/ImageInfoController.o
+
+# target to build an object file
+src/controller/ImageInfoController.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.o
+.PHONY : src/controller/ImageInfoController.cpp.o
+
+src/controller/ImageInfoController.i: src/controller/ImageInfoController.cpp.i
+
+.PHONY : src/controller/ImageInfoController.i
+
+# target to preprocess a source file
+src/controller/ImageInfoController.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.i
+.PHONY : src/controller/ImageInfoController.cpp.i
+
+src/controller/ImageInfoController.s: src/controller/ImageInfoController.cpp.s
+
+.PHONY : src/controller/ImageInfoController.s
+
+# target to generate assembly for a file
+src/controller/ImageInfoController.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/convert_cgi.dir/build.make CMakeFiles/convert_cgi.dir/src/controller/ImageInfoController.cpp.s
+.PHONY : src/controller/ImageInfoController.cpp.s
+
 src/controller/RetFileController.o: src/controller/RetFileController.cpp.o
 
 .PHONY : src/controller/RetFileController.o
@@ -326,6 +353,9 @@ help:
 	@echo "... src/controller/ImageController.o"
 	@echo "... src/controller/ImageController.i"
 	@echo "... src/controller/ImageController.s"
+	@echo "... src/controller/ImageInfoController.o"
+	@echo "... src/controller/ImageInfoController.i"
+	@echo "... src/controller/ImageInfoController.s"
 	@echo "... src/controller/RetFileController.o"
 	@echo "... src/controller/RetFileController.i"
 	@echo "... src/controller/RetFileController.s"
