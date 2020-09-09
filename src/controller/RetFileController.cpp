@@ -23,7 +23,7 @@ void controller_ret_file_handler(FCGX_Request &request, std::string &uri) {
         FCGI_fread(buff, 1, size, p_in_file);
         FCGI_fclose(p_in_file);
 
-        FCGX_FPrintF(request.out, "Content-Length: %ld;\r\n", info.st_size);
+        FCGX_FPrintF(request.out, CONTENT_TYPE_IMAGE, get_suffix(path));
         FCGX_PutStr(buff, size, request.out);
     }
 }
