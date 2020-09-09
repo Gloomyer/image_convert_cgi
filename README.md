@@ -6,7 +6,26 @@
 所以运行当前项目需要机器安装了
 
 - ffmpeg
+- imagemagick
 - openssl
+
+## 项目配置
+打开CMakeLists.txt
+
+找到
+```cmake
+MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
+IF (WIN32)
+    MESSAGE(STATUS "Now is windows")
+ELSEIF (APPLE)
+    MESSAGE(STATUS "Now is APPLE")
+ELSEIF (UNIX)
+    MESSAGE(STATUS "Now is UNIX-like OS's. Including aPPLE os x  and CygWin")
+ENDIF ()
+MESSAGE(STATUS "====================================")
+```
+
+APPLE 已经实现，参照 内容 修改WIN32或者UNIX 提供动态库
 
 ## 已经实现的功能点
 
@@ -19,40 +38,42 @@
 - 图片缩放
 - 图片裁切
 
-## 返回样例
+## 请求demo
 
-基础信息请求样例:http://???.???/111.png?type=basicInfo
-```json
+基础信息请求样例:http://url/111.png?type=basicInfo
+```json5
 {
-    ret: {
-        errCode: 0,
-        errName: "success",
-        msg: "success"
-    },
-    data: {
-        fileSize: 27566,
-        width: 1610,
-        height: 816,
-        mineType: "png"
-    }
+    fileSize: 27566,
+    width: 1610,
+    height: 816,
+    mineType: "png"
 }
 ```
 
-详细信息请求样例:http://???.???/111.png?type=detialInfo
-```json
+详细信息请求样例:http://url/111.png?type=detialInfo
+```json5
 {
-    ret: {
-        errCode: 0,
-        errName: "success",
-        msg: "success"
-    },
-    data: {
-        fileSize: 27566,
-        width: 1610,
-        height: 816,
-        light: 255,
-        mineType: "png",
-        md5: "9000ce9c9930f78e4fb4ff7c11a10f5f"
-    }
+    fileSize: 27566,
+    width: 1610,
+    height: 816,
+    light: 255,
+    mineType: "png",
+    md5: "9000ce9c9930f78e4fb4ff7c11a10f5f"
 }
 ```
+
+图片缩放请求样例:http://url/111.png?type=shrink&w=整数&h=整数
+> 备注: w/h只给1个即可 如果都给了 会计算两次 先宽 再高 然后缩放
+
+图片缩放请求样例:http://url/111.png?type=crop&w=整数&h=整数
+> 备注: w/h都必须得给 如果大于原图将 按照真实图片比例缩放 w/h
+
+图片降低质量样例:http://url/111.png?type=quality&q=0-100
+> 备注: q必须指定 取值1=100 不然报错
+
+还可以组合请求 如
+图片缩放请求样例:http://url/111.png?type=shrink,crop,quality&w=整数&h=整数&q=75
+
+处理逻辑按顺序处理
+
+

@@ -72,6 +72,13 @@ int crop_image(Magick::Image &image, int dst_w, int dst_h) {
     return 0;
 }
 
+int quality_image(Magick::Image &image, int q) {
+    if (q < 100 && q > 0) {
+        image.quality(q);
+    }
+    return 0;
+}
+
 void controller_image_handler(FCGX_Request &request, std::string &uri, std::string &query_str) {
     auto start = std::chrono::system_clock::now();
 
@@ -119,12 +126,11 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
             ret = shrink_image(image, target_w, target_h);
         } else if (method == "crop") {
             ret = crop_image(image, target_w, target_h);
+        } else if (method == "quality") {
+            ret = quality_image(image, q);
         }
-        if (ret != 0)break;
-    }
 
-    if (q < 100) {
-        image.quality(q);
+        if (ret != 0)break;
     }
 
     if (ret != 0) {
