@@ -13,27 +13,30 @@
  * @param src_w  原宽
  * @param src_h  原高
  */
-void shrink_image(Magick::Image &image, int dst_w, int dst_h) {
+int shrink_image(Magick::Image &image, int dst_w, int dst_h) {
     int src_w = image.columns();
     int src_h = image.rows();
 
     if (dst_w > src_w || dst_h > src_h) {
         //只缩，不放大
-        return;
+        return 0;
     }
 
-    //优先使用 w 缩放图片,
-    if (dst_w > 0) {
-        int scale_w = dst_w;
+    int scale_w = src_w, scale_h = src_h;
+    if (dst_w > 0) { //根据宽度计算缩放之后的宽高
+        scale_w = dst_w;
         double scale = dst_w * 1.0 / src_w;
-        int scale_h = (int) (src_h * scale);
-        image.scale(Magick::Geometry(scale_w, scale_h));
-    } else {
-        int scale_h = dst_h;
-        double scale = dst_h * 1.0 / src_h;
-        int scale_w = (int) (src_w * scale);
-        image.scale(Magick::Geometry(scale_w, scale_h));
+        scale_h = (int) (src_h * scale);
     }
+
+    if (dst_h > 0) { //根据高度计算缩放之后的宽高
+        scale_h = dst_h;
+        double scale = dst_h * 1.0 / src_h;
+        scale_w = (int) (src_w * scale);
+    }
+
+    image.scale(Magick::Geometry(scale_w, scale_h));
+    return 0;
 }
 
 /**
@@ -44,25 +47,32 @@ void shrink_image(Magick::Image &image, int dst_w, int dst_h) {
  * @param src_w  原宽
  * @param src_h  原高
  */
-void crop_image(Magick::Image &image, int dst_w, int dst_h) {
+int crop_image(Magick::Image &image, int dst_w, int dst_h) {
+    if (dst_w == -1 || dst_h == -1) return -7;
+
     int src_w = image.columns();
     int src_h = image.rows();
-    if (dst_w > src_w || dst_h > src_h) {
-        //如果要裁的的尺寸比原图大,重新计算要裁切的尺寸
-        if (dst_w > src_w) {
-            dst_w = src_w;
-            double scale = src_w * 1.0 / dst_w;
-            dst_h = (int) (scale * dst_h);
-            image.crop(Magick::Geometry(dst_w, dst_h,
-                                        src_w / 2 - dst_w / 2,
-                                        src_w / 2 - dst_w / 2));
-        } else {
 
-        }
+    //如果要裁的的尺寸比原图大,重新计算要裁切的尺寸
+    if (dst_w > src_w) {//宽比原图大
+        dst_w = src_w;
+        double scale = src_w * 1.0 / dst_w;
+        dst_h = (int) (scale * dst_h);
     }
+
+    if (dst_h > src_h) {//高比原图大
+        dst_h = src_h;
+        double scale = src_h * 1.0 / dst_h;
+        dst_w = (int) (scale * dst_w);
+    }
+
+    image.crop(Magick::Geometry(dst_w, dst_h,
+                                src_w / 2 - dst_w / 2,
+                                src_h / 2 - dst_h / 2));
+    return 0;
 }
 
-void controller_image_handler(std::string &uri, std::string &query_str) {
+void controller_image_handler(FCGX_Request &request, std::string &uri, std::string &query_str) {
     auto start = std::chrono::system_clock::now();
 
     std::string path(FILE_PREFIX);
@@ -86,7 +96,7 @@ void controller_image_handler(std::string &uri, std::string &query_str) {
     }
 
     if ((target_w == -1 && target_h == -1) || methods.empty()) {
-        controller_error_handler(-4, "缺少处理参数");
+        controller_error_handler(request, -4, "缺少处理参数");
         return;
     }
 
@@ -97,26 +107,34 @@ void controller_image_handler(std::string &uri, std::string &query_str) {
         origin_w = image.columns();
         origin_h = image.rows();
     } catch (...) {
-        controller_error_handler(-5, "文件不存在");
+        controller_error_handler(request, -5, "文件不存在");
         return;
     }
 
-
+    int ret = -6;
     for (auto &method :methods) {
         if (method == "shrink") {
-            shrink_image(image, target_w, target_h);
+            ret = shrink_image(image, target_w, target_h);
         } else if (method == "crop") {
-            crop_image(image, target_w, target_h);
+            ret = crop_image(image, target_w, target_h);
         }
+
+        if (ret != 0)break;
+    }
+
+    if (ret != 0) {
+        controller_error_handler(request, ret, "缺少处理参数");
+        return;
     }
 
     Magick::Blob blob;
     image.write(&blob);
     auto end = std::chrono::system_clock::now();
     auto duration = (std::chrono::duration_cast<std::chrono::milliseconds>(end - start)).count();
-    printf("Image-Size: %dx%d;%dx%d;\r\n", origin_w, origin_h,
-           image.columns(), image.rows());
-    printf("Time-Consuming: %lld;\r\n", duration);
-    printf(CONTENT_TYPE_IMAGE, get_suffix(path));
-    fwrite((void *) blob.data(), blob.length(), 1, stdout);
+    FCGX_FPrintF(request.out, "Image-Size: %dx%d;%dx%d;\r\n",
+                 origin_w, origin_h,
+                 image.columns(), image.rows());
+    FCGX_FPrintF(request.out, "Time-Consuming: %lld;\r\n", duration);
+    FCGX_FPrintF(request.out, CONTENT_TYPE_IMAGE, get_suffix(path));
+    FCGX_PutStr((char *) blob.data(), blob.length(), request.out);
 }

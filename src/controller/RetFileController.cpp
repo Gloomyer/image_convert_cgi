@@ -8,21 +8,22 @@
 #include <sys/stat.h>
 #include <fcgi_stdio.h>
 
-void controller_ret_file_handler(std::string &uri) {
+void controller_ret_file_handler(FCGX_Request &request, std::string &uri) {
     std::string path(FILE_PREFIX);
     path.append(uri);
-    FILE *p_in_file = fopen(path.c_str(), "rb+");
+    FILE *p_in_file = FCGI_fopen(path.c_str(), "rb+");
     if (p_in_file == nullptr) {
-        controller_error_handler(-3, "文件不存在");
+        controller_error_handler(request, -3, "文件不存在");
     } else {
         struct stat info{};
         stat(path.c_str(), &info);
-        long size = info.st_size;
+        int size = info.st_size;
         char buff[size];
         memset(buff, 0, size);
-        fread(buff, 1, size, p_in_file);
-        fclose(p_in_file);
-        printf("Content-type: image/%s;\r\n\r\n", get_suffix(path));
-        fwrite(buff, size, 1, stdout);
+        FCGI_fread(buff, 1, size, p_in_file);
+        FCGI_fclose(p_in_file);
+
+        FCGX_FPrintF(request.out, CONTENT_TYPE_IMAGE, get_suffix(path));
+        FCGX_PutStr(buff, size, request.out);
     }
 }

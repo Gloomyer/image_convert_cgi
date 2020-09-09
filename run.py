@@ -15,6 +15,7 @@ retStr: str = ''
 for line in val.readlines():
     retStr += line
 
+print("======================================================================")
 print(retStr)
 
 pid = retStr.split("ID: ")[1]
