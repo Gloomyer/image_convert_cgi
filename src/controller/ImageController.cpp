@@ -79,6 +79,11 @@ int quality_image(Magick::Image &image, int q) {
     return 0;
 }
 
+int format_image(Magick::Image &image, std::string &format) {
+    image.magick(format);
+    return 0;
+}
+
 void controller_image_handler(FCGX_Request &request, std::string &uri, std::string &query_str) {
     auto start = std::chrono::system_clock::now();
 
@@ -88,23 +93,35 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
     std::vector<std::string> entities = str_spilt(query_str, "&");
     std::vector<std::string> methods;
     int target_w = -1, target_h = -1, q = 100;
+    std::string format;
+    bool has_format = false;
     for (auto &entity : entities) {
         std::vector<std::string> map = str_spilt(entity, "=");
         //如果不是2 就是无效参数
         if (map.size() >= 2) {
             if (map[0] == "type") {
                 methods = str_spilt(map[1], ",");
+                for (auto &m : methods) {
+                    if (m == "format") {
+                        has_format = true;
+                        break;
+                    }
+                }
             } else if ("w" == map[0]) {
                 target_w = std::stoi(map[1]);
             } else if ("h" == map[0]) {
                 target_h = std::stoi(map[1]);
             } else if ("q" == map[0]) {
                 q = std::stoi(map[1]);
+            } else if ("f" == map[0]) {
+                format.append(map[1]);
             }
         }
     }
 
-    if ((target_w == -1 && target_h == -1) || methods.empty()) {
+
+    if ((target_w == -1 && target_h == -1 && !has_format) || methods.empty()
+        || (has_format && format.empty())) {
         controller_error_handler(request, -4, "缺少处理参数");
         return;
     }
@@ -128,6 +145,8 @@ void controller_image_handler(FCGX_Request &request, std::string &uri, std::stri
             ret = crop_image(image, target_w, target_h);
         } else if (method == "quality") {
             ret = quality_image(image, q);
+        } else if (method == "format") {
+            ret = format_image(image, format);
         }
 
         if (ret != 0)break;
