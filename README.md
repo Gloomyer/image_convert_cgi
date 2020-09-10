@@ -82,3 +82,5 @@ APPLE 已经实现，参照 内容 修改WIN32或者UNIX 提供动态库
 处理逻辑按顺序处理
 
 
+## 引用
+[非阻塞IO fcgi](https://www.jianshu.com/p/c8d65fb1941d)

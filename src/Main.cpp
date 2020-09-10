@@ -7,6 +7,8 @@
 
 using namespace std;
 
+FCGX_Request request_list[1000];
+
 static void *handler_thread(void *args) {
     long thread_serial_number = (long) args;
     int rc;
