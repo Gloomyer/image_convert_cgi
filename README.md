@@ -73,6 +73,9 @@ APPLE 已经实现，参照 内容 修改WIN32或者UNIX 提供动态库
 图片降低质量样例:http://url/111.png?type=quality&q=0-100
 > 备注: q必须指定 取值1=100 不然报错
 
+图片转码样例:http://url/111.png?type=format&f=JPEG
+> 备注: f必须指定 如 JPG PNG 等等..
+
 还可以组合请求 如
 图片缩放请求样例:http://url/111.png?type=shrink,crop,quality&w=整数&h=整数&q=75
 
