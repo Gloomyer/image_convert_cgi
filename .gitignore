@@ -3,3 +3,9 @@ cmake-build-debug
 cmake-build-debug/
 venv/
 .cgi_pid.pid
+CMakeFiles/
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+convert_cgi
+Makefile

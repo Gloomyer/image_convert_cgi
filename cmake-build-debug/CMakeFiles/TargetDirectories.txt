@@ -1,3 +1,0 @@
-/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/CMakeFiles/convert_cgi.dir
