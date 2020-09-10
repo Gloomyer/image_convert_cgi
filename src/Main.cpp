@@ -47,7 +47,10 @@ static void *handler_thread(void *args) {
             }
         }
 
-        FCGX_Finish_r(&request);
+        try{
+            FCGX_Finish_r(&request);
+        } catch (...) {
+        }
     }
     return nullptr;
 }
