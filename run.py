@@ -9,7 +9,10 @@ try:
 except IOError:
     print("IOError")
 
-cmd = "spawn-fcgi -f /Users/gloomypan/Projects/cpp/convert_cgi/cmake-build-debug/convert_cgi -a 127.0.0.1 -p 9000"
+os.system("cmake .")
+os.system("make")
+
+cmd = "spawn-fcgi -f /Users/gloomypan/Projects/cpp/convert_cgi/convert_cgi -a 127.0.0.1 -p 9000"
 val = os.popen(cmd)
 retStr: str = ''
 for line in val.readlines():
