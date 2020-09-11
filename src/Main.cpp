@@ -129,7 +129,30 @@ char *getParamValue(struct paramNameValue *nv, char *paramName) {
 
 
 void listen_loop(int socket_server_fd) {
-    int epoll_fd, i, ret;
+    struct fcgi_header header{}, headerBuf{};
+    int connfd;
+    int ret, i;
+    struct sockaddr_in servaddr{}, cliaddr{};
+    socklen_t slen, clen;
+
+    struct FCGI_BeginRequestBody brBody{};
+    struct paramNameValue paramNV{};
+    struct FCGI_EndRequestBody erBody{};
+
+    ssize_t rdlen;
+    int requestId, contentLen;
+    unsigned char paddingLen;
+    int paramNameLen, paramValueLen;
+
+    char buf[BUFLEN];
+
+    unsigned char c;
+    unsigned char lenbuf[3];
+    char *paramName, *paramValue;
+
+    char *htmlHead, *htmlBody;
+
+
     int timeout = 300;
     int kq = kqueue();
     struct kevent event{};
@@ -141,10 +164,9 @@ void listen_loop(int socket_server_fd) {
 
     struct kevent evList[32];
 
-    while (1) {
+    while (true) {
         // returns number of events
-        int nev = kevent(kq, NULL, 0, evList, 32, NULL);
-//        printf("kqueue got %d events\n", nev);
+        int nev = kevent(kq, nullptr, 0, evList, 32, nullptr);
 
         for (int i = 0; i < nev; i++) {
             int fd = (int) evList[i].ident;
@@ -173,10 +195,164 @@ void listen_loop(int socket_server_fd) {
                 kevent(kq, &event, 1, NULL, 0, NULL);
 
             } else if (evList[i].filter == EVFILT_READ) {
-                // Read from socket.
-                char buf[1024];
-                size_t bytes_read = recv(fd, buf, sizeof(buf), 0);
-                printf("read %zu bytes, content:%s\n", bytes_read, buf);
+                connfd = event.ident;
+                bzero(&header, HEAD_LEN);
+                rdlen = read(event.ident, &header, HEAD_LEN);
+                if (rdlen == -1) {
+                    // 无数据可读
+                    if (errno == EAGAIN) {
+                        break;
+                    } else {
+                        halt_error("read", errno);
+                    }
+                }
+
+                if (rdlen == 0) break; //消息读取结束
+                headerBuf = header;
+                requestId = (header.requestIdB1 << 8) + header.requestIdB0;
+                contentLen = (header.contentLengthB1 << 8) + header.contentLengthB0;
+                paddingLen = header.paddingLength;
+
+                printf("version = %d, type = %d, requestId = %d, contentLen = %d, paddingLength = %d\n",
+                       header.version, header.type, requestId, contentLen, paddingLen);
+                printf("%lx\n", header);
+
+                switch (header.type) {
+
+                    case FCGI_BEGIN_REQUEST:
+                        printf("******************************* begin request *******************************\n");
+                        //读取开始请求的请求体
+                        bzero(&brBody, sizeof(brBody));
+                        read(connfd, &brBody, sizeof(brBody));
+
+                        printf("role = %d, flags = %d\n", (brBody.roleB1 << 8) + brBody.roleB0, brBody.flags);
+
+                        break;
+
+                    case FCGI_PARAMS:
+                        printf("begin read params...\n");
+
+                        // 消息头中的contentLen = 0 表明此类消息已发送完毕
+                        if (contentLen == 0) {
+                            printf("read params end...\n");
+                        }
+
+                        //循环读取键值对
+                        while (contentLen > 0) {
+                            /*
+                            FCGI_PARAMS 以键值对的方式传送，键和值之间没有'=',每个键值对之前会分别用1或4个字节来标识键和值的长度 例如：
+                            \x0B\x02SERVER_PORT80\x0B\x0ESERVER_ADDR199.170.183.42
+                             上面的长度是用十六进制表示的  \x0B = 11  正好为SERVER_PORT的长度， \x02 = 2 为80的长度
+                            */
+
+                            // 获取paramName的长度
+                            unsigned char c;
+                            rdlen = read(event.ident, &c, 1);  //先读取一个字节，这个字节标识 paramName 的长度
+                            contentLen -= rdlen;
+
+                            if ((c & 0x80) != 0)  //如果 c 的值大于 128，则该 paramName 的长度用四个字节表示
+                            {
+                                rdlen = read(event.ident, lenbuf, 3);
+                                contentLen -= rdlen;
+                                paramNameLen = ((c & 0x7f) << 24) + (lenbuf[0] << 16) + (lenbuf[1] << 8) + lenbuf[2];
+                            } else {
+                                paramNameLen = c;
+                            }
+
+                            // 同样的方式获取paramValue的长度
+                            rdlen = read(connfd, &c, 1);
+                            contentLen -= rdlen;
+                            if ((c & 0x80) != 0) {
+                                rdlen = read(connfd, lenbuf, 3);
+                                contentLen -= rdlen;
+                                paramValueLen = ((c & 0x7f) << 24) + (lenbuf[0] << 16) + (lenbuf[1] << 8) + lenbuf[2];
+                            } else {
+                                paramValueLen = c;
+                            }
+
+                            //读取paramName
+                            paramName = (char *) calloc(paramNameLen + 1, sizeof(char));
+                            rdlen = read(connfd, paramName, paramNameLen);
+                            contentLen -= rdlen;
+
+                            //读取paramValue
+                            paramValue = (char *) calloc(paramValueLen + 1, sizeof(char));
+                            rdlen = read(connfd, paramValue, paramValueLen);
+                            contentLen -= rdlen;
+
+                            printf("read param: %s=%s\n", paramName, paramValue);
+
+                            if (paramNV.curLen == paramNV.maxLen) {
+                                // 如果键值结构体已满则把容量扩充一倍
+                                extend_paramNV(&paramNV);
+                            }
+
+                            paramNV.pname[paramNV.curLen] = paramName;
+                            paramNV.pvalue[paramNV.curLen] = paramValue;
+                            paramNV.curLen++;
+
+                        }
+
+                        if (paddingLen > 0) {
+                            rdlen = read(connfd, buf, paddingLen);
+                            contentLen -= rdlen;
+                        }
+
+                        break;
+
+                    case FCGI_STDIN:
+                        printf("begin read post...\n");
+
+                        if (contentLen == 0) {
+                            printf("read post end....\n");
+                        }
+
+                        if (contentLen > 0) {
+                            while (contentLen > 0) {
+                                if (contentLen > BUFLEN) {
+                                    rdlen = read(connfd, buf, BUFLEN);
+                                } else {
+                                    rdlen = read(connfd, buf, contentLen);
+                                }
+
+                                contentLen -= rdlen;
+                                fwrite(buf, sizeof(char), rdlen, stdout);
+                            }
+                            printf("\n");
+                        }
+
+                        if (paddingLen > 0) {
+                            rdlen = read(connfd, buf, paddingLen);
+                            contentLen -= rdlen;
+                        }
+
+                        break;
+
+                    case FCGI_DATA:
+                        printf("begin read data....\n");
+
+                        if (contentLen > 0) {
+                            while (contentLen > 0) {
+                                if (contentLen > BUFLEN) {
+                                    rdlen = read(connfd, buf, BUFLEN);
+                                } else {
+                                    rdlen = read(connfd, buf, contentLen);
+                                }
+
+                                contentLen -= rdlen;
+                                fwrite(buf, sizeof(char), rdlen, stdout);
+                            }
+                            printf("\n");
+                        }
+
+                        if (paddingLen > 0) {
+                            rdlen = read(connfd, buf, paddingLen);
+                            contentLen -= rdlen;
+                        }
+
+                        break;
+
+                }
             } else if (evList[i].filter == EVFILT_WRITE) {
 //                printf("Ok to write more!\n");
                 off_t offset = (off_t) evList[i].udata;
@@ -194,6 +370,9 @@ void listen_loop(int socket_server_fd) {
                 bytes_written += len;
                 printf("wrote %lld bytes, %lld total\n", len, bytes_written);
             }
+
+
+            printf("==============================================================================================================================\n");
         }
     }
 
@@ -205,7 +384,6 @@ int main(int argc, char **argv) {
     struct sockaddr_in servaddr{}, cliaddr{};
     socklen_t slen, clen;
 
-    struct fcgi_header header{}, headerBuf{};
     struct FCGI_BeginRequestBody brBody{};
     struct paramNameValue paramNV{};
     struct FCGI_EndRequestBody erBody{};
@@ -255,244 +433,79 @@ int main(int argc, char **argv) {
 
     close(socket_server_fd);
     return 0;
-    while (true) {
-        bzero(&cliaddr, clen);
-        connfd = accept(socket_server_fd, (struct sockaddr *) &cliaddr, &clen);
-        std::cout << "accept :" << connfd << std::endl;
-        if (connfd == -1) {
-            halt_error("accept", errno);
-            break;
-        }
+//    while (true) {
+//        bzero(&cliaddr, clen);
+//        connfd = accept(socket_server_fd, (struct sockaddr *) &cliaddr, &clen);
+//        std::cout << "accept :" << connfd << std::endl;
+//        if (connfd == -1) {
+//            halt_error("accept", errno);
+//            break;
+//        }
+//
+//        fcntl(connfd, F_SETFL, O_NONBLOCK); // 设置socket为非阻塞
+//
+//        init_paramNV(&paramNV);
 
-        fcntl(connfd, F_SETFL, O_NONBLOCK); // 设置socket为非阻塞
-
-        init_paramNV(&paramNV);
-
-        while (1) {
-
-            //读取消息头
-            bzero(&header, HEAD_LEN);
-            rdlen = read(connfd, &header, HEAD_LEN);
-
-            if (rdlen == -1) {
-                // 无数据可读
-                if (errno == EAGAIN) {
-                    break;
-                } else {
-                    halt_error("read", errno);
-                }
-            }
-
-            if (rdlen == 0) {
-                break; //消息读取结束
-            }
-
-            headerBuf = header;
-
-            requestId = (header.requestIdB1 << 8) + header.requestIdB0;
-            contentLen = (header.contentLengthB1 << 8) + header.contentLengthB0;
-            paddingLen = header.paddingLength;
-
-
-            printf("version = %d, type = %d, requestId = %d, contentLen = %d, paddingLength = %d\n",
-                   header.version, header.type, requestId, contentLen, paddingLen);
-
-            printf("%lx\n", header);
-
-
-            switch (header.type) {
-
-                case FCGI_BEGIN_REQUEST:
-                    printf("******************************* begin request *******************************\n");
-
-                    //读取开始请求的请求体
-                    bzero(&brBody, sizeof(brBody));
-                    read(connfd, &brBody, sizeof(brBody));
-
-                    printf("role = %d, flags = %d\n", (brBody.roleB1 << 8) + brBody.roleB0, brBody.flags);
-
-                    break;
-
-                case FCGI_PARAMS:
-                    printf("begin read params...\n");
-
-                    // 消息头中的contentLen = 0 表明此类消息已发送完毕
-                    if (contentLen == 0) {
-                        printf("read params end...\n");
-                    }
-
-                    //循环读取键值对
-                    while (contentLen > 0) {
-                        /*
-                        FCGI_PARAMS 以键值对的方式传送，键和值之间没有'=',每个键值对之前会分别用1或4个字节来标识键和值的长度 例如：
-                        \x0B\x02SERVER_PORT80\x0B\x0ESERVER_ADDR199.170.183.42
-                         上面的长度是用十六进制表示的  \x0B = 11  正好为SERVER_PORT的长度， \x02 = 2 为80的长度
-                        */
-
-                        // 获取paramName的长度
-                        rdlen = read(connfd, &c, 1);  //先读取一个字节，这个字节标识 paramName 的长度
-                        contentLen -= rdlen;
-
-                        if ((c & 0x80) != 0)  //如果 c 的值大于 128，则该 paramName 的长度用四个字节表示
-                        {
-                            rdlen = read(connfd, lenbuf, 3);
-                            contentLen -= rdlen;
-                            paramNameLen = ((c & 0x7f) << 24) + (lenbuf[0] << 16) + (lenbuf[1] << 8) + lenbuf[2];
-                        } else {
-                            paramNameLen = c;
-                        }
-
-                        // 同样的方式获取paramValue的长度
-                        rdlen = read(connfd, &c, 1);
-                        contentLen -= rdlen;
-                        if ((c & 0x80) != 0) {
-                            rdlen = read(connfd, lenbuf, 3);
-                            contentLen -= rdlen;
-                            paramValueLen = ((c & 0x7f) << 24) + (lenbuf[0] << 16) + (lenbuf[1] << 8) + lenbuf[2];
-                        } else {
-                            paramValueLen = c;
-                        }
-
-                        //读取paramName
-                        paramName = (char *) calloc(paramNameLen + 1, sizeof(char));
-                        rdlen = read(connfd, paramName, paramNameLen);
-                        contentLen -= rdlen;
-
-                        //读取paramValue
-                        paramValue = (char *) calloc(paramValueLen + 1, sizeof(char));
-                        rdlen = read(connfd, paramValue, paramValueLen);
-                        contentLen -= rdlen;
-
-                        printf("read param: %s=%s\n", paramName, paramValue);
-
-                        if (paramNV.curLen == paramNV.maxLen) {
-                            // 如果键值结构体已满则把容量扩充一倍
-                            extend_paramNV(&paramNV);
-                        }
-
-                        paramNV.pname[paramNV.curLen] = paramName;
-                        paramNV.pvalue[paramNV.curLen] = paramValue;
-                        paramNV.curLen++;
-
-                    }
-
-                    if (paddingLen > 0) {
-                        rdlen = read(connfd, buf, paddingLen);
-                        contentLen -= rdlen;
-                    }
-
-                    break;
-
-                case FCGI_STDIN:
-                    printf("begin read post...\n");
-
-                    if (contentLen == 0) {
-                        printf("read post end....\n");
-                    }
-
-                    if (contentLen > 0) {
-                        while (contentLen > 0) {
-                            if (contentLen > BUFLEN) {
-                                rdlen = read(connfd, buf, BUFLEN);
-                            } else {
-                                rdlen = read(connfd, buf, contentLen);
-                            }
-
-                            contentLen -= rdlen;
-                            fwrite(buf, sizeof(char), rdlen, stdout);
-                        }
-                        printf("\n");
-                    }
-
-                    if (paddingLen > 0) {
-                        rdlen = read(connfd, buf, paddingLen);
-                        contentLen -= rdlen;
-                    }
-
-                    break;
-
-                case FCGI_DATA:
-                    printf("begin read data....\n");
-
-                    if (contentLen > 0) {
-                        while (contentLen > 0) {
-                            if (contentLen > BUFLEN) {
-                                rdlen = read(connfd, buf, BUFLEN);
-                            } else {
-                                rdlen = read(connfd, buf, contentLen);
-                            }
-
-                            contentLen -= rdlen;
-                            fwrite(buf, sizeof(char), rdlen, stdout);
-                        }
-                        printf("\n");
-                    }
-
-                    if (paddingLen > 0) {
-                        rdlen = read(connfd, buf, paddingLen);
-                        contentLen -= rdlen;
-                    }
-
-                    break;
-
-            }
-        }
-
-
-        /* 以上是从web服务器读取数据，下面向web服务器返回数据 */
-
-
-        headerBuf.version = FCGI_VERSION_1;
-        headerBuf.type = FCGI_STDOUT;
-
-        htmlHead = "Content-type: text/html\r\n\r\n";  //响应头
-        htmlBody = getParamValue(&paramNV, "SCRIPT_FILENAME");  // 把请求文件路径作为响应体返回
-
-        printf("html: %s%s\n", htmlHead, htmlBody);
-
-        contentLen = strlen(htmlHead) + strlen(htmlBody);
-
-        headerBuf.contentLengthB1 = (contentLen >> 8) & 0xff;
-        headerBuf.contentLengthB0 = contentLen & 0xff;
-        headerBuf.paddingLength = (contentLen % 8) > 0 ? 8 - (contentLen % 8) : 0;  // 让数据 8 字节对齐
-
-
-        write(connfd, &headerBuf, HEAD_LEN);
-        write(connfd, htmlHead, strlen(htmlHead));
-        write(connfd, htmlBody, strlen(htmlBody));
-
-        if (headerBuf.paddingLength > 0) {
-            write(connfd, buf, headerBuf.paddingLength);  //填充数据随便写什么，数据会被服务器忽略
-        }
-
-        free_paramNV(&paramNV);
-
-        //回写一个空的 FCGI_STDOUT 表明 该类型消息已发送结束
-        headerBuf.type = FCGI_STDOUT;
-        headerBuf.contentLengthB1 = 0;
-        headerBuf.contentLengthB0 = 0;
-        headerBuf.paddingLength = 0;
-        write(connfd, &headerBuf, HEAD_LEN);
-
-
-        // 发送结束请求消息头
-        headerBuf.type = FCGI_END_REQUEST;
-        headerBuf.contentLengthB1 = 0;
-        headerBuf.contentLengthB0 = 8;
-        headerBuf.paddingLength = 0;
-
-        bzero(&erBody, sizeof(erBody));
-        erBody.protocolStatus = FCGI_REQUEST_COMPLETE;
-
-        write(connfd, &headerBuf, HEAD_LEN);
-        write(connfd, &erBody, sizeof(erBody));
-
-        close(connfd);
-
-        printf("******************************* end request *******************************\n");
-    }
-
-    close(socket_server_fd);
+//        while (1) {
+//
+//
+//        }
+//
+//
+//        /* 以上是从web服务器读取数据，下面向web服务器返回数据 */
+//
+//
+//        headerBuf.version = FCGI_VERSION_1;
+//        headerBuf.type = FCGI_STDOUT;
+//
+//        htmlHead = "Content-type: text/html\r\n\r\n";  //响应头
+//        htmlBody = getParamValue(&paramNV, "SCRIPT_FILENAME");  // 把请求文件路径作为响应体返回
+//
+//        printf("html: %s%s\n", htmlHead, htmlBody);
+//
+//        contentLen = strlen(htmlHead) + strlen(htmlBody);
+//
+//        headerBuf.contentLengthB1 = (contentLen >> 8) & 0xff;
+//        headerBuf.contentLengthB0 = contentLen & 0xff;
+//        headerBuf.paddingLength = (contentLen % 8) > 0 ? 8 - (contentLen % 8) : 0;  // 让数据 8 字节对齐
+//
+//
+//        write(connfd, &headerBuf, HEAD_LEN);
+//        write(connfd, htmlHead, strlen(htmlHead));
+//        write(connfd, htmlBody, strlen(htmlBody));
+//
+//        if (headerBuf.paddingLength > 0) {
+//            write(connfd, buf, headerBuf.paddingLength);  //填充数据随便写什么，数据会被服务器忽略
+//        }
+//
+//        free_paramNV(&paramNV);
+//
+//        //回写一个空的 FCGI_STDOUT 表明 该类型消息已发送结束
+//        headerBuf.type = FCGI_STDOUT;
+//        headerBuf.contentLengthB1 = 0;
+//        headerBuf.contentLengthB0 = 0;
+//        headerBuf.paddingLength = 0;
+//        write(connfd, &headerBuf, HEAD_LEN);
+//
+//
+//        // 发送结束请求消息头
+//        headerBuf.type = FCGI_END_REQUEST;
+//        headerBuf.contentLengthB1 = 0;
+//        headerBuf.contentLengthB0 = 8;
+//        headerBuf.paddingLength = 0;
+//
+//        bzero(&erBody, sizeof(erBody));
+//        erBody.protocolStatus = FCGI_REQUEST_COMPLETE;
+//
+//        write(connfd, &headerBuf, HEAD_LEN);
+//        write(connfd, &erBody, sizeof(erBody));
+//
+//        close(connfd);
+//
+//        printf("******************************* end request *******************************\n");
+//    }
+//
+//    close(socket_server_fd);
 
     return 0;
 }
