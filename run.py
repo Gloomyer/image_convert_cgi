@@ -12,7 +12,7 @@ except IOError:
 os.system("cmake .")
 os.system("make")
 
-cmd = "spawn-fcgi -f /Users/gloomypan/Projects/cpp/convert_cgi/convert_cgi -a 127.0.0.1 -p 9000 -F 5"
+cmd = "spawn-fcgi -f /Users/gloomypan/Projects/cpp/convert_cgi/convert_cgi -a 127.0.0.1 -p 9000 -F 1"
 val = os.popen(cmd)
 retStr: str = ''
 for line in val.readlines():
