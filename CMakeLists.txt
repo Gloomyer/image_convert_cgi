@@ -47,9 +47,10 @@ MESSAGE(STATUS "====================================")
 
 
 FILE(GLOB SRC_MAIN "./src/*.cpp" "./src/*.h")
-FILE(GLOB SRC_SOURCE "./src/*/*.cpp" "./src/*/*.h")
+#FILE(GLOB SRC_SOURCE "./src/*/*.cpp" "./src/*/*.h")
 
-add_executable(convert_cgi ${SRC_SOURCE} ${SRC_MAIN})
+#${SRC_SOURCE}
+add_executable(convert_cgi ${SRC_MAIN})
 
 target_link_libraries(${PROJECT_NAME}
         f_cgi f_cgi_pp
